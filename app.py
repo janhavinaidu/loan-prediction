@@ -90,7 +90,5 @@ if submit:
     result = "✅ Approved" if prediction == 1 else "❌ Rejected"
     st.success(f"Prediction: {result}")
 
-st.markdown("---")
-st.subheader("📊 Model Explanation")
-st.markdown("👉 [Click here to view the interactive ExplainerDashboard](https://loan-prediction-8fsr.onrender.com)", unsafe_allow_html=True)
+
 st.info("🔧 This app is built with Streamlit and deployed on Render.")
