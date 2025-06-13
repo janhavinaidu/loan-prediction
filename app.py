@@ -2,7 +2,7 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-# Load the trained model pipeline
+# Load trained pipeline model
 model = joblib.load("loan_approval_model.joblib")
 
 st.set_page_config(page_title="Loan Approval Predictor", layout="wide")
@@ -29,7 +29,7 @@ with st.form("loan_form"):
     submit = st.form_submit_button("Predict Loan Approval")
 
 if submit:
-    # Encoding
+    # Manual encoding + derived features
     gender = 1 if gender == "Male" else 0
     married = 1 if married == "Yes" else 0
     education = 1 if education == "Graduate" else 0
@@ -38,7 +38,6 @@ if submit:
     property_area = property_map[property_area]
     dependents = 3 if dependents == "3+" else int(dependents)
 
-    # Derived features
     total_income = applicant_income + coapplicant_income
     income_to_loan_ratio = total_income / (loan_amount + 1)
     emi = (loan_amount * 1000) / loan_term if loan_term else 0
@@ -49,8 +48,8 @@ if submit:
     loan_bins = pd.cut([loan_amount], bins=[0, 100, 200, 700], labels=[1, 2, 3])[0]
     family_size = dependents + 1
 
-    # Create DataFrame
-    features = pd.DataFrame([{
+    # Final DataFrame with expected feature columns
+    input_df = pd.DataFrame([{
         'Gender': gender,
         'Married': married,
         'Dependents': dependents,
@@ -73,8 +72,8 @@ if submit:
         'FamilySize': family_size
     }])
 
-    # Predict
-    prediction = model.predict(features)[0]
+    # Predict using model pipeline
+    prediction = model.predict(input_df)[0]
     result = "✅ Approved" if prediction == 1 else "❌ Rejected"
     st.success(f"Prediction: {result}")
 
